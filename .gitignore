@@ -14,3 +14,5 @@ instance/
 
 # VSCode settings (optional)
 .vscode/
+.env
+.env
