@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import generate_password_hash,check_password_hash
 from extensions import db
 from database.authmodel import User
+
 auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -39,21 +40,29 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
         flash("Signup successful", "success")
-        return redirect(url_for('auth.signup'))
-    return render_template("authtemplates/signup.html")
-@auth_bp.route('/signin')
+        return redirect(url_for('auth.signin'))    #here hugga
+    return render_template("authtemplates/signup.html")    
+
+@auth_bp.route('/signin',methods = ['POST','GET'])
 def signin():
-    email = request.form.get('email')
-    password = request.form.get('password')
-    if not email or not password:
-        flash("Email and password are required", "error")
-        return redirect(url_for('auth.signin'))
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        flash("User not found", "error")
-        return redirect(url_for('auth.signin'))
-    if not check_password_hash(user.password, password):
-        flash("Invalid password", "error")
-        return redirect(url_for('auth.signin'))
-    flash("Signin successful", "success")
-    return render_template("landing.html")
+    if request.method == 'post':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        if not email or not password:
+            flash("Email and password are required", "error")
+            return redirect(url_for('auth.signin'))
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash("User not found", "error")
+            return redirect(url_for('auth.signin'))
+        if not check_password_hash(user.password, password):
+            flash("Invalid password", "error")
+            return redirect(url_for('auth.signin'))
+        flash("Signin successful", "success")
+    return render_template("authtemplates/signin.html")          #all good
+ 
+
+@auth_bp.route('/success')
+def successs():
+ 
+    return render_template("success.html")          #iski mkc nikal de
